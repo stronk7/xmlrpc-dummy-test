@@ -1,0 +1,50 @@
+name: XMLRPC installation tests
+
+on: push
+
+jobs:
+  Test:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - php: 7.2
+            extensions:
+          - php: 7.3
+            extensions:
+          - php: 7.4
+            extensions:
+          - php: 8.0
+            extensions: xmlrpc-beta
+          - php: 8.1
+            extensions: xmlrpc-beta
+          - php: 8.0
+            extensions: xmlrpc
+          - php: 8.1
+            extensions: xmlrpc
+
+    steps:
+      - name: Setting up PHP ${{ matrix.php }} with setup-php 2.20.1
+        uses: shivammathur/setup-php@2.20.1
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Verify XMLRPC is available for ${{ matrix.php }} with setup-php 2.20.1
+        run: |
+          php -m | grep -i xmlrpc && echo "Ok!"
+
+      - name: Setting up PHP ${{ matrix.php }} with setup-php 2.21.1
+        uses: shivammathur/setup-php@2.21.1
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Verify XMLRPC is available for ${{ matrix.php }} with setup-php 2.21.1
+        run: |
+          php -m | grep -i xmlrpc && echo "Ok!"
